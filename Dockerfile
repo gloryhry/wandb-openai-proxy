@@ -1,23 +1,24 @@
-# Stage 1: Build the application
-FROM denoland/deno:alpine AS build
+# Stage 1: Build the application using a Debian-based image
+# Change from denoland/deno:alpine to denoland/deno:debian
+FROM denoland/deno:debian AS build
 
 WORKDIR /app
 
 # Cache dependencies
 COPY deno.json .
-# It's often better to cache dependencies for main.ts and any other entry points
 RUN deno cache main.ts --config deno.json
 
 # Copy source code and compile
 COPY src/ ./src/
 COPY main.ts .
 COPY config.ts .
-# Ensure permissions are set for the output file if needed
 RUN deno compile --allow-net --allow-env --config deno.json --output server main.ts
 
 # Stage 2: Create the final, small image
-# Use a minimal base image without a pre-configured entrypoint
-FROM gcr.io/distroless/static-debian11
+# Use a base distroless image that includes glibc and other common libraries
+# We use 'base-debian11' instead of 'static-debian11' because the compiled
+# binary is dynamically linked to glibc, not a fully static binary.
+FROM gcr.io/distroless/base-debian11
 
 WORKDIR /app
 
