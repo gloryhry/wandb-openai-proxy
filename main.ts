@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
-import { handleModelsRequest, handleChatCompletionsRequest } from "./src/handlers.ts";
+import { handleRootRequest, handleModelsRequest, handleChatCompletionsRequest } from "./src/handlers.ts";
 import {
   addCorsHeaders,
   validateAuth,
@@ -50,7 +50,10 @@ export async function handler(request: Request): Promise<Response> {
     }
 
     // 路由分发
-    if (pathname === "/v1/models" && request.method === "GET") {
+    if (pathname === "/" && request.method === "GET") {
+      // 根路径不需要认证
+      return handleRootRequest();
+    } else if (pathname === "/v1/models" && request.method === "GET") {
       return handleModelsRequest(authHeader, request).then(addCorsHeaders);
     } else if (pathname === "/v1/chat/completions" && request.method === "POST") {
       return handleChatCompletionsRequest(authHeader, request).then(addCorsHeaders);

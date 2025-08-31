@@ -13,6 +13,83 @@ import {
 } from "./transformers.ts";
 import { CONFIG } from "../config.ts";
 
+// 简单的 Markdown 到 HTML 转换函数
+function markdownToHtml(markdown: string): string {
+  // 简单的转换规则
+  let html = markdown
+    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+    .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
+    .replace(/^##### (.*$)/gim, '<h5>$1</h5>')
+    .replace(/^###### (.*$)/gim, '<h6>$1</h6>')
+    .replace(/^\*\*([^*].*?)\*\*/gim, '<strong>$1</strong>')
+    .replace(/^\*([^*].*?)\*/gim, '<em>$1</em>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2">$1</a>')
+    .replace(/^> (.*$)/gim, '<blockquote><p>$1</p></blockquote>')
+    .replace(/^\* (.*$)/gim, '<ul><li>$1</li></ul>')
+    .replace(/^\d+\. (.*$)/gim, '<ol><li>$1</li></ol>')
+    .replace(/\n\n/gim, '</p><p>')
+    .replace(/\n/gim, '<br />');
+  
+  // 处理代码块
+  html = html.replace(/```([a-z]*)\n([\s\S]*?)```/gim, '<pre><code class="language-$1">$2</code></pre>');
+  
+  // 处理行内代码
+  html = html.replace(/`([^`]+)`/gim, '<code>$1</code>');
+  
+  return `<p>${html}</p>`;
+}
+
+// 创建 HTML 页面模板
+function createHtmlPage(content: string): string {
+  return `
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wandb OpenAI Proxy</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; }
+    h1, h2, h3 { color: #2c3e50; }
+    code { background-color: #f4f4f4; padding: 2px 4px; border-radius: 3px; font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; }
+    pre { background-color: #f4f4f4; padding: 12px; border-radius: 5px; overflow-x: auto; }
+    pre code { background: none; padding: 0; }
+    blockquote { border-left: 4px solid #ddd; padding: 0 15px; color: #777; }
+    a { color: #3498db; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  ${content}
+</body>
+</html>`;
+}
+
+export async function handleRootRequest(): Promise<Response> {
+  try {
+    // 读取 README.md 文件
+    const readmeContent = await Deno.readTextFile("./README.md");
+    
+    // 转换 Markdown 为 HTML
+    const htmlContent = markdownToHtml(readmeContent);
+    
+    // 创建完整 HTML 页面
+    const htmlPage = createHtmlPage(htmlContent);
+    
+    return new Response(htmlPage, {
+      status: 200,
+      headers: {
+        "Content-Type": "text/html; charset=utf-8"
+      }
+    });
+  } catch (error) {
+    console.error("Error reading README.md:", error);
+    return new Response("Unable to load README.md", { status: 500 });
+  }
+}
+
 export async function handleModelsRequest(
   authHeader: string,
   request: Request
