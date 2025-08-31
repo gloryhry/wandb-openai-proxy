@@ -2,15 +2,15 @@
   "routes": [
     {
       "src": "/v1/models",
-      "dest": "/api/v1/models"
+      "dest": "/api/v1/models.ts"
     },
     {
       "src": "/v1/chat/completions",
-      "dest": "/api/v1/chat/completions"
+      "dest": "/api/v1/chat/completions.ts"
     },
     {
       "src": "/(.*)",
-      "dest": "/api/index"
+      "dest": "/api/index.ts"
     }
   ],
   "builds": [
