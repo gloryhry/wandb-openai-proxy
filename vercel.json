@@ -1,0 +1,25 @@
+{
+  "routes": [
+    {
+      "src": "/v1/models",
+      "dest": "/api/v1/models"
+    },
+    {
+      "src": "/v1/chat/completions",
+      "dest": "/api/v1/chat/completions"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/index"
+    }
+  ],
+  "env": {
+    "WANDB_API_KEY": "@wandb-api-key"
+  },
+  "builds": [
+    {
+      "src": "api/**/*.ts",
+      "use": "@vercel/node"
+    }
+  ]
+}

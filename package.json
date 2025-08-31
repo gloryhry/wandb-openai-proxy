@@ -1,0 +1,29 @@
+{
+  "name": "wandb-openai-proxy",
+  "version": "1.0.0",
+  "description": "A proxy service that converts Wandb inference API to OpenAI standard format, deployable on Vercel",
+  "main": "main.ts",
+  "scripts": {
+    "dev": "deno run --allow-net --allow-env --watch main.ts",
+    "start": "deno run --allow-net --allow-env main.ts",
+    "test": "deno test --allow-net --allow-env",
+    "fmt": "deno fmt",
+    "lint": "deno lint"
+  },
+  "keywords": [
+    "wandb",
+    "openai",
+    "proxy",
+    "api",
+    "vercel",
+    "deno"
+  ],
+  "author": "gloryhry",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0"
+  }
+}

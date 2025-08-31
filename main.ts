@@ -1,4 +1,3 @@
-import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
 import { handleRootRequest, handleModelsRequest, handleChatCompletionsRequest } from "./src/handlers.ts";
 import {
   addCorsHeaders,
@@ -9,8 +8,8 @@ import {
   createOptionsResponse
 } from "./src/utils.ts";
 
-const PORT = Deno.env.get("PORT") || 8000;
-const WANDB_API_KEY = Deno.env.get("WANDB_API_KEY") || "";
+// 在 Vercel 环境中获取环境变量
+const WANDB_API_KEY = process.env.WANDB_API_KEY || Deno?.env?.get("WANDB_API_KEY") || "";
 
 export async function handler(request: Request): Promise<Response> {
   try {
@@ -70,7 +69,8 @@ export async function handler(request: Request): Promise<Response> {
 }
 
 // Deno Deploy适配
-if (import.meta.main) {
+if (typeof Deno !== "undefined" && import.meta.main) {
+  const PORT = Deno.env.get("PORT") || 8000;
   console.log(`Server running on http://localhost:${PORT}`);
   
   if (WANDB_API_KEY === "") {
@@ -80,7 +80,8 @@ if (import.meta.main) {
     console.log(`✅ Using WANDB_API_KEY from environment`);
   }
 
-  serve(handler, { 
+  // @ts-ignore
+  Deno.serve(handler, { 
     port: typeof PORT === "string" ? parseInt(PORT) : PORT,
     onListen: ({ port }) => {
       console.log(`🚀 Deno server listening on port ${port}`);
@@ -88,5 +89,5 @@ if (import.meta.main) {
   });
 }
 
-// Deno Deploy入口点
+// Vercel 和 Deno Deploy 入口点
 export default handler;
