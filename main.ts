@@ -10,7 +10,7 @@ import {
 } from "./src/utils.ts";
 
 const PORT = Deno.env.get("PORT") || 8000;
-const WANDB_API_KEY = Deno.env.get("WANDB_API_KEY");
+const WANDB_API_KEY = Deno.env.get("WANDB_API_KEY") || "";
 
 export async function handler(request: Request): Promise<Response> {
   try {
@@ -36,7 +36,7 @@ export async function handler(request: Request): Promise<Response> {
     let authHeader = request.headers.get("Authorization");
     
     // 如果环境变量设置了WANDB_API_KEY，则使用它
-    if (!authHeader && WANDB_API_KEY) {
+    if (!authHeader && WANDB_API_KEY !== "") {
       authHeader = `Bearer ${WANDB_API_KEY}`;
     }
     
@@ -73,7 +73,7 @@ export async function handler(request: Request): Promise<Response> {
 if (import.meta.main) {
   console.log(`Server running on http://localhost:${PORT}`);
   
-  if (!WANDB_API_KEY) {
+  if (WANDB_API_KEY === "") {
     console.log(`⚠️  WARNING: WANDB_API_KEY environment variable is not set.`);
     console.log(`   You must provide Authorization header with requests.`);
   } else {
