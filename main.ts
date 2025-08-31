@@ -74,8 +74,8 @@ if (import.meta.main) {
   console.log(`Server running on http://localhost:${PORT}`);
   
   if (!WANDB_API_KEY) {
-    console.warn(`⚠️  WARNING: WANDB_API_KEY environment variable is not set.`);
-    console.warn(`   You must provide Authorization header with requests.`);
+    console.log(`⚠️  WARNING: WANDB_API_KEY environment variable is not set.`);
+    console.log(`   You must provide Authorization header with requests.`);
   } else {
     console.log(`✅ Using WANDB_API_KEY from environment`);
   }
