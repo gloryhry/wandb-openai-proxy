@@ -21,7 +21,7 @@ ehthumbs.db
 Thumbs.db
 
 # Environment files (keep structure but ignore actual values)
-.env
+# .env
 .env.local
 
 # Coverage reports

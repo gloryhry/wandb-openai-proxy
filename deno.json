@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "exports": "./main.ts",
   "tasks": {
-    "start": "deno run --allow-net main.ts",
+    "start": "deno run --allow-net --allow-env main.ts",
     "dev": "deno run --allow-net --allow-env --watch main.ts",
     "test": "deno test --allow-net --allow-env",
     "fmt": "deno fmt",
