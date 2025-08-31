@@ -13,9 +13,6 @@
       "dest": "/api/index"
     }
   ],
-  "env": {
-    "WANDB_API_KEY": "@wandb-api-key"
-  },
   "builds": [
     {
       "src": "api/**/*.ts",

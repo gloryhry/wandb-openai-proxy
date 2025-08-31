@@ -59,11 +59,11 @@
 
 ## ⚙️ 环境变量配置
 
-在 Vercel 中，您需要配置以下环境变量：
+在 Vercel 中，您可以选择配置以下环境变量：
 
 | 变量名 | 必需 | 说明 |
 |--------|------|------|
-| `WANDB_API_KEY` | ✅ | 您的 Wandb API 密钥，用于认证 |
+| `WANDB_API_KEY` | ❌ | 您的 Wandb API 密钥，用于认证（可选，也可在请求时通过 Authorization 头提供） |
 
 ## 🧪 测试部署
 
@@ -71,12 +71,29 @@
 
 ### 获取模型列表
 ```bash
+# 如果设置了 WANDB_API_KEY 环境变量
+curl https://your-project-url.vercel.app/v1/models
+
+# 如果没有设置环境变量，需要提供 API Key
 curl https://your-project-url.vercel.app/v1/models \
   -H "Authorization: Bearer your_wandb_api_key"
 ```
 
 ### 聊天完成 - 非流式响应
 ```bash
+# 如果设置了 WANDB_API_KEY 环境变量
+curl https://your-project-url.vercel.app/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-4",
+    "messages": [
+      {"role": "user", "content": "解释一下机器学习中的过拟合问题"}
+    ],
+    "max_tokens": 500,
+    "temperature": 0.7
+  }'
+
+# 如果没有设置环境变量，需要提供 API Key
 curl https://your-project-url.vercel.app/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer your_wandb_api_key" \
@@ -92,6 +109,19 @@ curl https://your-project-url.vercel.app/v1/chat/completions \
 
 ### 聊天完成 - 流式响应
 ```bash
+# 如果设置了 WANDB_API_KEY 环境变量
+curl https://your-project-url.vercel.app/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-4",
+    "messages": [
+      {"role": "user", "content": "你好，请介绍一下你自己"}
+    ],
+    "max_tokens": 100,
+    "stream": true
+  }'
+
+# 如果没有设置环境变量，需要提供 API Key
 curl https://your-project-url.vercel.app/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer your_wandb_api_key" \
