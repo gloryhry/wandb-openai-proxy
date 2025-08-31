@@ -45,10 +45,10 @@ async function withMock(response: any, test: () => Promise<void>) {
   }
 }
 
-Deno.test("健康检查", async () => {
+Deno.test("根路径访问", async () => {
   const request = createRequest("/", "GET");
   const response = await handler(request);
-  assertEquals(response.status, 404);
+  assertEquals(response.status, 200);
 });
 
 Deno.test("方法限制", async () => {

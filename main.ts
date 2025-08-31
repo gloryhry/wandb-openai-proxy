@@ -27,7 +27,12 @@ export async function handler(request: Request): Promise<Response> {
     const url = new URL(request.url);
     const pathname = url.pathname;
 
-    // 验证授权
+    // 路由分发 - 根路径不需要认证
+    if (pathname === "/" && request.method === "GET") {
+      return handleRootRequest();
+    }
+
+    // 其他路径需要认证
     let authHeader = request.headers.get("Authorization");
     
     // 如果环境变量设置了WANDB_API_KEY，则使用它
@@ -49,11 +54,8 @@ export async function handler(request: Request): Promise<Response> {
       );
     }
 
-    // 路由分发
-    if (pathname === "/" && request.method === "GET") {
-      // 根路径不需要认证
-      return handleRootRequest();
-    } else if (pathname === "/v1/models" && request.method === "GET") {
+    // 处理其他路由
+    if (pathname === "/v1/models" && request.method === "GET") {
       return handleModelsRequest(authHeader, request).then(addCorsHeaders);
     } else if (pathname === "/v1/chat/completions" && request.method === "POST") {
       return handleChatCompletionsRequest(authHeader, request).then(addCorsHeaders);
